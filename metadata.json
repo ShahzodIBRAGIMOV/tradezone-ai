@@ -1,0 +1,10 @@
+{
+  "name": "Remix TradeSmart AI",
+  "description": "Eksport va importni optimallashtiruvchi B2B web-platformasi va aqlli AI konsalting tizimi.",
+  "requestFramePermissions": [
+    "MICROPHONE"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

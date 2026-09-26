@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Foydalanuvchilar (Users & Roles)
+enum UserRole {
+  TADBIRKOR   // Entrepreneur / Manufacturer
+  FERMER      // Agricultural Producer
+  LOGISTIKA   // Freight Forwarder / Logistics Agent
+}
+
+model User {
+  id              String             @id @default(uuid())
+  email           String?            @unique
+  fullName        String
+  companyName     String
+  role            UserRole           @default(TADBIRKOR)
+  industryFocus   String             // Qishloq xo'jaligi, Tekstil, Metallurgiya, etc.
+  phoneNumber     String?
+  country         String             @default("O'zbekiston")
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  calculations    TradeCalculation[]
+  chatSessions    ChatSession[]
+  savedProducts   SavedExportProduct[]
+
+  @@map("users")
+}
+
+// 2. Eksport Mahsulotlari Katalogi (Export Products)
+model ExportProduct {
+  id              String             @id @default(uuid())
+  title           String             // Masalan: "Gilos (Sweet Cherries)"
+  hsCode          String             // TIF TN: "0809.29"
+  category        String             // Qishloq xo'jaligi, Tekstil, Kimyo, Sanoat
+  imageUrl        String?
+  description     String
+  unit            String             @default("tonna") // kg, tonna, dona
+  averagePriceUsd Float              // O'rtacha jahon narxi ($)
+  gspPlusEligible Boolean            @default(true) // GSP+ preferentsiya imtiyozi mavjudligi
+  seasonPeak      String             // "May - Iyul", "Yil bo'yi"
+  minOrderQty     Float              @default(1.0)
+  targetCountries String[]           // ["Rossiya", "Germaniya", "BAA", "Xitoy"]
+  requiredCerts   String[]           // ["Fitosanitariya", "ST-1", "GlobalG.A.P."]
+  logisticsModes  String[]           // ["Avto-refrijerator", "Avia kargo"]
+
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  savedByUsers    SavedExportProduct[]
+  calculations    TradeCalculation[]
+
+  @@map("export_products")
+}
+
+model SavedExportProduct {
+  id          String        @id @default(uuid())
+  userId      String
+  productId   String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     ExportProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+
+  @@unique([userId, productId])
+  @@map("saved_export_products")
+}
+
+// 3. Import Statistikasi va Mahalliylashtirish (Import Analytics & Red Zone)
+model ImportStatistic {
+  id                  String   @id @default(uuid())
+  title               String   // Masalan: "Kungaboqar va o'simlik moyi"
+  hsCode              String   // TIF TN: "1512.19"
+  category            String   // Oziq-ovqat, Qurilish, Farmatsevtika
+  importVolumeUsd     Float    // Masalan: 340_000_000 ($340M)
+  annualGrowthPercent Float    // Masalan: 38.5 (% keskin o'sish)
+  originCountries     String[] // ["Rossiya", "Qozog'iston", "Xitoy"]
+  
+  // "Qizil Hudud" tahlili (Import Substitution)
+  isRedZone           Boolean  @default(false) // Keskin oshgan va o'zimizda ishlab chiqarish imkoni yuqori
+  substitutionFeasibility String // "Yuqori", "O'rtacha", "Past"
+  localRawMaterial    String   // Mahalliy xomashyo bazasi (masalan, "Mahalliy soya va paxta yog'i")
+  estimatedInvestment Float    // Taxminiy mini-zavod investitsiyasi ($)
+  recommendation      String   // AI va mutaxassis tavsiyasi
+  paybackPeriodMonths Int?     // Qoplanish muddati (oy)
+
+  periodYear          Int      @default(2026)
+  periodQuarter       Int      @default(1)
+  createdAt           DateTime @default(now())
+
+  @@map("import_statistics")
+}
+
+// 4. Moliyaviy Savdo Kalkulyatori Tarixi (Trade Calculations)
+model TradeCalculation {
+  id              String         @id @default(uuid())
+  userId          String?
+  user            User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  productId       String?
+  product         ExportProduct? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  
+  productName     String
+  volumeTons      Float
+  destination     String         // Masalan: "Rossiya (Moskva)" yoki "Germaniya (Frankfurt)"
+  transportMode   String         // "Avto TIR", "Temiryo'l konteyner", "Avia"
+  
+  // Xarajatlar va foyda tafsilotlari ($)
+  purchaseCost    Float
+  transportCost   Float
+  packagingCost   Float
+  customsDutyCost Float
+  certificationCost Float
+  totalCost       Float
+  expectedRevenue Float
+  netProfit       Float
+  profitMarginPercent Float
+  
+  aiRecommendations String?      @db.Text
+  createdAt       DateTime       @default(now())
+
+  @@map("trade_calculations")
+}
+
+// 5. Smart AI Chat Sessiyasi va Xabarlar (Floating Chat RAG)
+model ChatSession {
+  id          String        @id @default(uuid())
+  userId      String?
+  user        User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String        @default("Yangi Savdo Muloqoti")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  messages    ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+enum MessageSender {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+model ChatMessage {
+  id          String        @id @default(uuid())
+  sessionId   String
+  session     ChatSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sender      MessageSender
+  content     String        @db.Text
+  promptType  String?       // "seasonal", "certificate", "calculator", "substitution"
+  metadata    Json?         // HS code, kalkulyator natijalari, havolalar
+  createdAt   DateTime      @default(now())
+
+  @@map("chat_messages")
+}

@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaktiv Logistika Marshrut Xaritasi | TradeSmart AI Logistics</title>
+  
+  <!-- Academic/Executive Font Pairing -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* -------------------------------------------------------------
+       CSS VARIABLES & THEME SYSTEM (Royal Blue & Gold Palette)
+       Academic & Premium Faculty Identity
+    ------------------------------------------------------------- */
+    :root {
+      --bg-primary: #07111e;
+      --bg-secondary: #0c1c33;
+      --bg-surface: #0e2240;
+      --bg-card: rgba(14, 34, 64, 0.88);
+      --bg-card-hover: rgba(22, 50, 92, 0.95);
+      
+      --accent-gold: #d4af37;
+      --accent-gold-light: #f6d06d;
+      --accent-gold-glow: rgba(212, 175, 55, 0.45);
+      --accent-gold-muted: rgba(212, 175, 55, 0.15);
+
+      --royal-blue: #1e3e62;
+      --royal-blue-light: #2c5a8d;
+      --royal-blue-dark: #091729;
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a9c9;
+      --text-muted: #5e779c;
+
+      --border-color: rgba(212, 175, 55, 0.28);
+      --border-glow: rgba(212, 175, 55, 0.65);
+      --border-subtle: rgba(70, 115, 170, 0.22);
+
+      --grid-line: rgba(80, 130, 190, 0.08);
+      --dot-color: rgba(212, 175, 55, 0.22);
+
+      --status-active: #10b981;
+      --status-alert: #f59e0b;
+      --cyan-bright: #38bdf8;
+
+      --font-display: 'Cinzel', serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --shadow-premium: 0 20px 40px -15px rgba(3, 8, 16, 0.8), 0 0 30px rgba(212, 175, 55, 0.12);
+      --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Light Mode Support via Media Query */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-primary: #f4f7fb;
+        --bg-secondary: #e9eff7;
+        --bg-surface: #ffffff;
+        --bg-card: rgba(255, 255, 255, 0.94);
+        --bg-card-hover: rgba(240, 246, 255, 0.98);
+
+        --accent-gold: #b38600;
+        --accent-gold-light: #d4af37;
+        --accent-gold-glow: rgba(179, 134, 0, 0.35);
+        --accent-gold-muted: rgba(179, 134, 0, 0.12);
+
+        --royal-blue: #0b1e38;
+        --royal-blue-light: #163660;
+        --royal-blue-dark: #e2e8f0;
+
+        --text-primary: #0a192f;
+        --text-secondary: #334d6e;
+        --text-muted: #64748b;
+
+        --border-color: rgba(179, 134, 0, 0.32);
+        --border-glow: rgba(179, 134, 0, 0.65);
+        --border-subtle: rgba(11, 30, 56, 0.15);
+
+        --grid-line: rgba(11, 30, 56, 0.05);
+        --dot-color: rgba(179, 134, 0, 0.18);
+        --shadow-premium: 0 15px 35px -10px rgba(11, 30, 56, 0.12), 0 0 20px rgba(179, 134, 0, 0.08);
+      }
+    }
+
+    /* Base Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      padding: 1rem;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(30, 62, 98, 0.35) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.12) 0%, transparent 45%);
+    }
+
+    /* Layout Container */
+    .logistics-container {
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      box-shadow: var(--shadow-premium);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      backdrop-blur-md;
+    }
+
+    /* Header Bar */
+    .header-bar {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-subtle);
+      background: linear-gradient(135deg, rgba(14, 34, 64, 0.95), rgba(7, 17, 30, 0.95));
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-emblem {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-gold), var(--royal-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #07111e;
+      font-weight: 900;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      border: 2px solid var(--accent-gold-light);
+      box-shadow: 0 0 16px var(--accent-gold-glow);
+    }
+
+    .header-text h1 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .header-text h1 span.gold {
+      color: var(--accent-gold-light);
+      text-shadow: 0 0 12px var(--accent-gold-glow);
+    }
+
+    .header-text p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    /* Destination Selector Pills */
+    .destination-switcher {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(7, 17, 30, 0.7);
+      padding: 0.35rem;
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+      overflow-x: auto;
+    }
+
+    .dest-pill {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid transparent;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: var(--transition-smooth);
+      white-space: nowrap;
+      font-family: var(--font-body);
+    }
+
+    .dest-pill:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .dest-pill.active {
+      background: linear-gradient(135deg, var(--royal-blue-light), var(--royal-blue));
+      color: var(--accent-gold-light);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 12px var(--accent-gold-glow);
+    }
+
+    /* Main Interactive Workspace */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      min-height: 560px;
+      position: relative;
+    }
+
+    @media (max-width: 980px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Map Stage (SVG Canvas) */
+    .map-canvas-container {
+      position: relative;
+      background: var(--bg-primary);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    /* Stylized Dot & Grid Background Pattern */
+    .schematic-background {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-size: 32px 32px;
+      background-image: 
+        radial-gradient(circle, var(--dot-color) 1.2px, transparent 1.2px),
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    }
+
+    /* Compass Rose / Coordinate Watermark */
+    .compass-overlay {
+      position: absolute;
+      bottom: 24px;
+      left: 28px;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    .compass-overlay .axis {
+      letter-spacing: 0.1em;
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    /* SVG Route Map Canvas */
+    .route-svg {
+      width: 100%;
+      height: 100%;
+      max-height: 580px;
+      filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.4));
+    }
+
+    /* SVG Styling */
+    .svg-corridor-track {
+      stroke: var(--border-subtle);
+      stroke-width: 3;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .svg-corridor-active {
+      stroke: var(--accent-gold);
+      stroke-width: 3.5;
+      stroke-dasharray: 8 6;
+      stroke-linecap: round;
+      fill: none;
+      animation: dashMove 30s linear infinite;
+      filter: drop-shadow(0 0 6px var(--accent-gold-glow));
+    }
+
+    @keyframes dashMove {
+      from { stroke-dashoffset: 600; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Node Points in SVG */
+    .map-node {
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .map-node:hover .node-halo {
+      r: 32;
+      opacity: 0.45;
+      stroke-width: 2.5;
+    }
+
+    .map-node:hover .node-circle {
+      transform: scale(1.15);
+      stroke-width: 3;
+    }
+
+    .map-node.selected .node-halo {
+      r: 34;
+      opacity: 0.6;
+      stroke: var(--accent-gold-light);
+      animation: pulseHalo 2s infinite;
+    }
+
+    .map-node.selected .node-circle {
+      stroke: #ffffff;
+      stroke-width: 3.5;
+      filter: drop-shadow(0 0 10px var(--accent-gold-light));
+    }
+
+    @keyframes pulseHalo {
+      0%, 100% { r: 28; opacity: 0.3; }
+      50% { r: 36; opacity: 0.65; }
+    }
+
+    /* Node text labels */
+    .node-label {
+      font-family: var(--font-body);
+      font-size: 11.5px;
+      font-weight: 700;
+      fill: var(--text-primary);
+      text-anchor: middle;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+    }
+
+    .node-sublabel {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 500;
+      fill: var(--accent-gold-light);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    /* Photon / Moving Pulse on path */
+    .photon-dot {
+      fill: #ffffff;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 14px var(--accent-gold));
+    }
+
+    /* Right Sidebar (Stage Progress & Details) */
+    .stage-sidebar {
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.8rem;
+    }
+
+    .sidebar-header h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-gold);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .route-metric-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold-light);
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    /* Interactive Timeline / Stage Cards */
+    .stages-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .stages-timeline::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      bottom: 18px;
+      left: 18px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent-gold), var(--royal-blue-light));
+      opacity: 0.4;
+    }
+
+    .stage-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .stage-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-color);
+      transform: translateX(4px);
+    }
+
+    .stage-card.active {
+      border-color: var(--accent-gold);
+      background: linear-gradient(135deg, rgba(30, 62, 98, 0.4), rgba(14, 34, 64, 0.9));
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(212, 175, 55, 0.15);
+    }
+
+    .stage-card-icon {
+      position: absolute;
+      left: 9px;
+      top: 14px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      border: 2px solid var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--accent-gold-light);
+      z-index: 2;
+    }
+
+    .stage-card.active .stage-card-icon {
+      background: var(--accent-gold);
+      color: #07111e;
+      box-shadow: 0 0 10px var(--accent-gold);
+    }
+
+    .stage-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stage-time {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    .stage-role {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .stage-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Selected Stage Detail Inspector (Pop-up Card) */
+    .inspector-panel {
+      margin-top: auto;
+      background: linear-gradient(135deg, rgba(7, 17, 30, 0.95), rgba(14, 34, 64, 0.95));
+      border: 1px solid var(--accent-gold);
+      border-radius: 16px;
+      padding: 1.1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.15);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .inspector-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .inspector-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(212, 175, 55, 0.18);
+      border: 1px solid var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-gold-light);
+      font-size: 1rem;
+      shrink-0: 0;
+    }
+
+    .inspector-name {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .inspector-sub {
+      font-size: 0.72rem;
+      color: var(--accent-gold-light);
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    .inspector-body {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .inspector-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+    }
+
+    .inspector-tag {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(70, 115, 170, 0.2);
+      border: 1px solid rgba(70, 115, 170, 0.4);
+      color: var(--cyan-bright);
+      font-weight: 700;
+    }
+
+    /* Footer Legend & Controls */
+    .footer-bar {
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(7, 17, 30, 0.85);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.75rem;
+    }
+
+    .legend-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .academic-footnote {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-style: italic;
+    }
+
+    /* Interactive tooltip on SVG hovering */
+    .svg-tooltip {
+      position: absolute;
+      background: rgba(7, 17, 30, 0.95);
+      border: 1px solid var(--accent-gold);
+      border-radius: 8px;
+      padding: 0.4rem 0.75rem;
+      color: #fff;
+      font-size: 0.72rem;
+      pointer-events: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+      transform: translate(-50%, -130%);
+      white-space: nowrap;
+      display: none;
+      z-index: 10;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      body {
+        padding: 0.4rem;
+      }
+      .header-bar {
+        padding: 1rem;
+      }
+      .header-text h1 {
+        font-size: 1.15rem;
+      }
+      .stage-sidebar {
+        padding: 1rem;
+      }
+      .destination-switcher {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logistics-container">
+    
+    <!-- Top Header & Route Selection -->
+    <header class="header-bar">
+      <div class="brand-title-wrap">
+        <div class="brand-emblem">TS</div>
+        <div class="header-text">
+          <h1>Namangan <span class="gold">⟷</span> Xalqaro Bozorlar</h1>
+          <p>Tashqi Iqtisodiy Faoliyat & Logistika Kafedrasi Eksport Xaritasi</p>
+        </div>
+      </div>
+
+      <!-- Destination Mode Buttons -->
+      <nav class="destination-switcher" id="destSwitcher" aria-label="Marshrut tanlash">
+        <!-- Dynamically generated buttons -->
+      </nav>
+    </header>
+
+    <!-- Main Workspace: SVG Map Canvas + Interactive Stage Sidebar -->
+    <main class="main-grid">
+      
+      <!-- Interactive SVG Canvas Area -->
+      <div class="map-canvas-container" id="mapCanvasContainer">
+        
+        <!-- Schematic Grid Background -->
+        <div class="schematic-background"></div>
+
+        <!-- Coordinates overlay -->
+        <div class="compass-overlay">
+          <div class="axis">LAT 40.9983° N / LON 71.6726° E</div>
+          <div>ORIGIN: NAMANGAN AGRO-LOGISTICS HUB</div>
+          <div>DATUM: WGS84 SCHEMATIC CARGO CORRIDOR</div>
+        </div>
+
+        <!-- Floating hover tooltip -->
+        <div class="svg-tooltip" id="mapTooltip"></div>
+
+        <!-- SVG Map Element -->
+        <svg class="route-svg" viewBox="0 0 920 540" id="routeSvg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Ocean Bathymetric Gradient Background -->
+            <radialGradient id="realOceanGradient" cx="50%" cy="50%" r="70%">
+              <stop offset="0%" stop-color="#0c2543" />
+              <stop offset="45%" stop-color="#071b33" />
+              <stop offset="85%" stop-color="#041021" />
+              <stop offset="100%" stop-color="#020813" />
+            </radialGradient>
+
+            <!-- Marked Route Red Glow Filter -->
+            <filter id="redBorderGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <!-- Gold Linear Gradient for Path -->
+            <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#10B981" stop-opacity="0.95" />
+              <stop offset="35%" stop-color="#38BDF8" stop-opacity="0.95" />
+              <stop offset="70%" stop-color="#F59E0B" stop-opacity="1" />
+              <stop offset="100%" stop-color="#EF4444" stop-opacity="1" />
+            </linearGradient>
+
+            <!-- Glow Filter -->
+            <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          <!-- REAL MAP LAYER 0: Ocean Base Texture with Bathymetry -->
+          <rect width="920" height="540" fill="url(#realOceanGradient)" rx="12" />
+
+          <!-- Latitude and Longitude Geographic Graticule Grid -->
+          <g class="pointer-events-none opacity-20">
+            <line x1="0" y1="110" x2="920" y2="110" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="4 4" />
+            <text x="12" y="106" fill="#38bdf8" font-size="8" font-family="monospace">60° N</text>
+
+            <line x1="0" y1="210" x2="920" y2="210" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="4 4" />
+            <text x="12" y="206" fill="#38bdf8" font-size="8" font-family="monospace">50° N</text>
+
+            <line x1="0" y1="330" x2="920" y2="330" stroke="#38bdf8" stroke-width="1" stroke-dasharray="6 3" />
+            <text x="12" y="326" fill="#38bdf8" font-size="8" font-family="monospace">40° N (Markaziy Osiyo)</text>
+
+            <line x1="0" y1="450" x2="920" y2="450" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="4 4" />
+            <text x="12" y="446" fill="#38bdf8" font-size="8" font-family="monospace">30° N</text>
+
+            <line x1="120" y1="0" x2="120" y2="540" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="4 4" />
+            <line x1="280" y1="0" x2="280" y2="540" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="4 4" />
+            <line x1="480" y1="0" x2="480" y2="540" stroke="#38bdf8" stroke-width="1" stroke-dasharray="6 3" />
+            <line x1="680" y1="0" x2="680" y2="540" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="4 4" />
+            <line x1="860" y1="0" x2="860" y2="540" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="4 4" />
+          </g>
+
+          <!-- LAYER 1: Water Bodies & Seas -->
+          <g id="waterBodiesGroup"></g>
+
+          <!-- LAYER 2: Eurasian Country Boundaries (BELGILANGAN DAVLATLAR QIZIL CHIZIQ BILAN) -->
+          <g id="countriesGroup"></g>
+
+          <!-- LAYER 3: Surrounding Trade Hubs -->
+          <g id="regionalHubsGroup"></g>
+
+          <!-- Dynamic Route Line Elements -->
+          <g id="routeLinesGroup"></g>
+
+          <!-- Animated Moving Pulse / Photon -->
+          <g id="pulseParticleGroup"></g>
+
+          <!-- Moving Vehicle Marker -->
+          <g id="vehicleGroup"></g>
+
+          <!-- Dynamic Stage Markers (Origin, Customs, Border, Destination) -->
+          <g id="routeNodesGroup"></g>
+        </svg>
+
+      </div>
+
+      <!-- Right Stage Progress Timeline & Detail Inspector -->
+      <aside class="stage-sidebar">
+        <div class="sidebar-header">
+          <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Marshrut Bosqichlari
+          </h3>
+          <span class="route-metric-badge" id="routeTotalBadge">4,850 km | 8-12 kun</span>
+        </div>
+
+        <!-- Stage Timeline Cards -->
+        <div class="stages-timeline" id="stagesTimeline">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Selected Stage Detail Inspector -->
+        <div class="inspector-panel" id="inspectorPanel">
+          <div class="inspector-title-row">
+            <div class="inspector-icon" id="inspIcon">🏛️</div>
+            <div>
+              <div class="inspector-name" id="inspName">Namangan, O'zbekiston</div>
+              <div class="inspector-sub" id="inspTime">Boshlang'ich nuqta • 0-kun</div>
+            </div>
+          </div>
+          <div class="inspector-body" id="inspDesc">
+            Meva-sabzavot, to'qimachilik va sanoat mahsulotlarini eksport partiyalariga saralash, qadoqlash hamda xalqaro standartlar bo'yicha markirovkalash.
+          </div>
+          <div class="inspector-tags" id="inspTags">
+            <span class="inspector-tag">📦 Agro-tekstil Hub</span>
+            <span class="inspector-tag">🚛 Refrijerator TIR</span>
+          </div>
+        </div>
+
+      </aside>
+
+    </main>
+
+    <!-- Footer Bar with Legend -->
+    <footer class="footer-bar">
+      <div class="legend-group">
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #10B981;"></div>
+          <span>Boshlang'ich (Namangan)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #38BDF8;"></div>
+          <span>Bojxona & Ombor (Toshkent)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #F59E0B;"></div>
+          <span>Chegara Maskani (Xorgos)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #D4AF37;"></div>
+          <span>Yakuniy Bozorlar (Xitoy/EI/Rossiya/Turkiya)</span>
+        </div>
+      </div>
+      <div class="academic-footnote">
+        Iqtisodiyot va Xalqaro Logistika fakulteti talabalari uchun interaktiv amaliy model.
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- -------------------------------------------------------------
+       JAVASCRIPT: ROUTE DATA & 60FPS INTERACTIVE SVG ENGINE
+  ------------------------------------------------------------- -->
+  <script>
+    /**
+     * CONFIGURABLE ROUTE DATA
+     * Designed to be easily edited, expanded, or customized later.
+     */
+    const LOGISTICS_DATA = {
+      destinations: [
+        {
+          id: 'china',
+          name: 'Xitoy (Urumchi / Shanxay)',
+          flag: '🇨🇳',
+          totalDistance: '4,850 km',
+          totalTime: '8 — 12 kun',
+          corridorName: 'Buyuk Ipak Yo\'li (Xorgos koridori)',
+          stages: [
+            {
+              id: 'namangan',
+              name: 'Namangan, O\'zbekiston',
+              role: 'Boshlang\'ich Nuqta (Agro & Tekstil yuklash)',
+              time: '0-kun (Boshlanish)',
+              icon: '🏛️',
+              color: '#10B981',
+              coords: [480, 360],
+              desc: 'Yuklarni saralash, qadoqlash va eksport partiyalarini shakllantirish (To\'qimachilik, yangi va quritilgan meva-sabzavot).',
+              tags: ['Eksport Partiyasi', 'Namangan FEZ', 'Avto TIR']
+            },
+            {
+              id: 'tashkent',
+              name: 'Toshkent, O\'zbekiston',
+              role: 'Bojxona & Logistika Markazi',
+              time: '+1 kun (300 km)',
+              icon: '🏢',
+              color: '#38BDF8',
+              coords: [430, 320],
+              desc: 'Bojxona rasmiylashtiruvi (BYuD), Fitosanitariya va ST-1 kelib chiqish sertifikatlari, multimodal temiryo\'l/avto konsolidatsiyasi.',
+              tags: ['TIF BYuD', 'Fito Sertifikat', 'Yashil Yo\'lak']
+            },
+            {
+              id: 'khorgos',
+              name: 'Xorgos (Khorgos Gateway)',
+              role: 'Qozog\'iston — Xitoy Chegara Bojxona Maskani',
+              time: '+4 kun (1,450 km)',
+              icon: '🛂',
+              color: '#F59E0B',
+              coords: [620, 260],
+              desc: 'Quruqlikdagi eng yirik quruq port (Dry Port). Temiryo\'l relslari kengligi almashinuvi (1520 mm dan 1435 mm gacha) va rentgen-skaner nazorati.',
+              tags: ['Quruq Port', 'Rels O\'zgarishi', 'Bojxona Chegarasi']
+            },
+            {
+              id: 'dest-china',
+              name: 'Xitoy (Urumchi / Shanxay)',
+              role: 'Yakuniy Iste\'mol Bozori',
+              time: '+8 — 12 kun (4,850 km)',
+              icon: '🎯',
+              color: '#D4AF37',
+              coords: [820, 270],
+              desc: 'Elektronika va xomashyo importi, o\'zbek paxta ipi va qishloq xo\'jaligi mahsulotlarining Xitoy ulgurji savdo tarmoqlariga topshirilishi.',
+              tags: ['Xitoy Ulgurji Bozor', 'Konteyner Logistika', 'Yuqori Talab']
+            }
+          ]
+        },
+        {
+          id: 'russia',
+          name: 'Rossiya (Moskva / Sankt-Peterburg)',
+          flag: '🇷🇺',
+          totalDistance: '3,450 km',
+          totalTime: '5 — 7 kun',
+          corridorName: 'MDH Shimoliy Refrijerator Koridori',
+          stages: [
+            {
+              id: 'namangan',
+              name: 'Namangan, O\'zbekiston',
+              role: 'Boshlang\'ich Nuqta',
+              time: '0-kun',
+              icon: '🏛️',
+              color: '#10B981',
+              coords: [480, 360],
+              desc: 'Meva va qishloq xo\'jaligi mahsulotlarini shok sovutish (+2...+4°C) va refrijerator tirlariga yuklash.',
+              tags: ['Shok Sovutish', 'TIR Carnet']
+            },
+            {
+              id: 'tashkent',
+              name: 'Toshkent, O\'zbekiston',
+              role: 'Bojxona Rasmiylashtiruvi',
+              time: '+1 kun',
+              icon: '🏢',
+              color: '#38BDF8',
+              coords: [430, 320],
+              desc: 'TSOYaEAT tizimida shartnoma ro\'yxatdan o\'tkazilishi, ST-1 sertifikati (MDH hududida 0% nol stavkali bojxona).',
+              tags: ['ST-1 Sertifikat', 'MDH 0% Boj']
+            },
+            {
+              id: 'ozinki',
+              name: 'Qozog\'iston — Rossiya Chegarasi (O\'zinki)',
+              role: 'Chegara Tranzit Punkti',
+              time: '+3 kun (2,100 km)',
+              icon: '🛂',
+              color: '#F59E0B',
+              coords: [320, 210],
+              desc: 'Evroosiyo Iqtisodiy Ittifoqi (EOII) tranzit nazorati va fitosanitariya xulosalarini tasdiqlash.',
+              tags: ['Tranzit Yo\'lagi', 'Fito Nazorat']
+            },
+            {
+              id: 'dest-russia',
+              name: 'Rossiya (Moskva / Fudsiti)',
+              role: 'Yakuniy Ulkan Bozor',
+              time: '+5 — 7 kun (3,450 km)',
+              icon: '🎯',
+              color: '#38BDF8',
+              coords: [180, 160],
+              desc: '"Fudsiti" va yirik ulgurji logistika taqsimot markazlariga to\'g\'ridan-to\'g\'ri tushirish.',
+              tags: ['Fudsiti Moskva', 'Tez Yetkazish']
+            }
+          ]
+        },
+        {
+          id: 'eu',
+          name: 'Yevropa Ittifoqi (Frankfurt / Duisburg)',
+          flag: '🇪🇺',
+          totalDistance: '5,420 km',
+          totalTime: '12 — 16 kun',
+          corridorName: 'GSP+ Yevropa Ittifoqi Imtiyozli Koridori',
+          stages: [
+            {
+              id: 'namangan',
+              name: 'Namangan, O\'zbekiston',
+              role: 'Boshlang\'ich Nuqta',
+              time: '0-kun',
+              icon: '🏛️',
+              color: '#10B981',
+              coords: [480, 360],
+              desc: 'OEKO-TEX va GlobalG.A.P. xalqaro sifat sertifikatlari talablari bo\'yicha mahsulot tayyorlash.',
+              tags: ['OEKO-TEX Standart', 'GlobalG.A.P.']
+            },
+            {
+              id: 'tashkent',
+              name: 'Toshkent, O\'zbekiston',
+              role: 'GSP+ & REX Rasmiylashtiruv',
+              time: '+1 kun',
+              icon: '🏢',
+              color: '#38BDF8',
+              coords: [430, 320],
+              desc: 'Yevropa Ittifoqining GSP+ preferensiyalar tizimi (REX kodi) orqali 0% bojsiz eksport deklaratsiyasi.',
+              tags: ['GSP+ REX', 'EUR.1 Formasi']
+            },
+            {
+              id: 'caspian',
+              name: 'Kaspiy / Aktau — Boku Porti',
+              role: 'Multimodal Dengiz Tranziti',
+              time: '+5 kun',
+              icon: '🚢',
+              color: '#F59E0B',
+              coords: [280, 280],
+              desc: 'Transkaspiy xalqaro transport yo\'nalishi (O\'rta Koridor / TITR) fider kemalari orqali vagon va tirlar o\'tishi.',
+              tags: ['Kema Paromi', 'TITR Koridor']
+            },
+            {
+              id: 'dest-eu',
+              name: 'Germaniya (Frankfurt / Duisburg)',
+              role: 'Yakuniy GSP+ Bozori',
+              time: '+12 — 16 kun (5,420 km)',
+              icon: '🎯',
+              color: '#10B981',
+              coords: [100, 220],
+              desc: 'Duisburg quruq porti va Yevropa Ittifoqi supermarketlariga to\'g\'ridan-to\'g\'ri 0% bojsiz yetkazib berish.',
+              tags: ['Yevropa Markazi', '0% Nol Boj']
+            }
+          ]
+        },
+        {
+          id: 'turkey',
+          name: 'Turkiya (Istanbul / Mersin)',
+          flag: '🇹🇷',
+          totalDistance: '3,850 km',
+          totalTime: '7 — 10 kun',
+          corridorName: 'O\'rta Koridor & O\'rta Yer Dengizi',
+          stages: [
+            {
+              id: 'namangan',
+              name: 'Namangan, O\'zbekiston',
+              role: 'Boshlang\'ich Nuqta',
+              time: '0-kun',
+              icon: '🏛️',
+              color: '#10B981',
+              coords: [480, 360],
+              desc: 'Sanoat kalava iplari, quritilgan meva va mis katodlarini eksportga yuklash.',
+              tags: ['Sanoat Iplari', 'Mis Eksporti']
+            },
+            {
+              id: 'tashkent',
+              name: 'Toshkent, O\'zbekiston',
+              role: 'Bojxona & TSOYaEAT',
+              time: '+1 kun',
+              icon: '🏢',
+              color: '#38BDF8',
+              coords: [430, 320],
+              desc: 'Turkiya bilan preferensial savdo bitimlari bo\'yicha pasaytirilgan bojxona deklaratsiyasi.',
+              tags: ['Preferensial Savdo', 'Elektron BYuD']
+            },
+            {
+              id: 'baku',
+              name: 'Boku (Alat porti), Ozarbayjon',
+              role: 'Kavkaz Logistika Darvozasi',
+              time: '+4 kun',
+              icon: '🛂',
+              color: '#F59E0B',
+              coords: [280, 340],
+              desc: 'Boku-Tbilisi-Qars (BTQ) xalqaro temiryo\'li orqali tezyurar yuk poyezdlariga o\'tish.',
+              tags: ['BTQ Temiryo\'l', 'Kavkaz Darvozasi']
+            },
+            {
+              id: 'dest-turkey',
+              name: 'Turkiya (Istanbul)',
+              role: 'Yakuniy Bozor & Dengiz Porti',
+              time: '+7 — 10 kun (3,850 km)',
+              icon: '🎯',
+              color: '#F59E0B',
+              coords: [150, 360],
+              desc: 'Marmara va O\'rta yer dengizi portlari orqali global bozorlarga chiqish imkoniyati.',
+              tags: ['O\'rta Yer Dengizi', 'Turkiya Bozori']
+            }
+          ]
+        }
+      ]
+    };
+
+    /**
+     * STATE MANAGEMENT
+     */
+    let currentDestinationId = 'china';
+    let currentSelectedStageId = 'namangan';
+    let pulseAnimationFrameId = null;
+
+    // DOM References
+    const destSwitcherEl = document.getElementById('destSwitcher');
+    const waterBodiesGroup = document.getElementById('waterBodiesGroup');
+    const countriesGroup = document.getElementById('countriesGroup');
+    const regionalHubsGroup = document.getElementById('regionalHubsGroup');
+    const vehicleGroup = document.getElementById('vehicleGroup');
+    const routeLinesGroup = document.getElementById('routeLinesGroup');
+    const pulseParticleGroup = document.getElementById('pulseParticleGroup');
+    const routeNodesGroup = document.getElementById('routeNodesGroup');
+    const stagesTimelineEl = document.getElementById('stagesTimeline');
+    const routeTotalBadgeEl = document.getElementById('routeTotalBadge');
+    const mapTooltipEl = document.getElementById('mapTooltip');
+    const mapContainerEl = document.getElementById('mapCanvasContainer');
+
+    // Countries & Geographic Data
+    const COUNTRIES_DATA = [
+      { id: 'uzb', name: 'O\'zbekiston', flag: '🇺🇿', labelCoords: [430, 345], path: 'M 320 310 L 350 295 L 390 310 L 440 300 L 470 315 L 500 350 L 515 375 L 485 390 L 450 370 L 420 380 L 390 395 L 360 365 L 325 340 Z', color: 'rgba(16, 185, 129, 0.22)', stroke: 'rgba(16, 185, 129, 0.75)', info: 'Markaziy Osiyo savdo xabi: Namangan, Toshkent, Samarqand' },
+      { id: 'kaz', name: 'Qozog\'iston', flag: '🇰🇿', labelCoords: [460, 235], path: 'M 240 260 L 290 220 L 340 180 L 420 170 L 520 180 L 620 220 L 660 270 L 630 300 L 580 320 L 500 310 L 440 300 L 390 310 L 350 295 L 320 310 L 260 290 Z', color: 'rgba(56, 189, 248, 0.12)', stroke: 'rgba(56, 189, 248, 0.45)', info: 'Asosiy quruqlik tranziti: Xorgos, Almati, Oqtov porti' },
+      { id: 'chn', name: 'Xitoy', flag: '🇨🇳', labelCoords: [740, 320], path: 'M 620 220 L 720 190 L 820 190 L 900 240 L 910 370 L 850 440 L 760 430 L 680 390 L 640 340 L 630 300 L 660 270 Z', color: 'rgba(212, 175, 55, 0.15)', stroke: 'rgba(212, 175, 55, 0.55)', info: 'Yirik eksport-import bozori: Urumchi, Shanxay, Lianyungang' },
+      { id: 'rus', name: 'Rossiya', flag: '🇷🇺', labelCoords: [320, 130], path: 'M 140 160 L 170 110 L 260 90 L 400 90 L 540 100 L 660 140 L 620 220 L 520 180 L 420 170 L 340 180 L 290 220 L 210 200 Z', color: 'rgba(147, 197, 253, 0.12)', stroke: 'rgba(147, 197, 253, 0.40)', info: 'MDH shimoliy yo\'lagi: Moskva, Sankt-Peterburg, Fudsiti' },
+      { id: 'tur', name: 'Turkiya', flag: '🇹🇷', labelCoords: [160, 360], path: 'M 110 340 L 170 330 L 210 340 L 215 375 L 180 390 L 130 380 L 110 355 Z', color: 'rgba(245, 158, 11, 0.15)', stroke: 'rgba(245, 158, 11, 0.55)', info: 'O\'rta Koridor: Istanbul, Mersin porti, Bosfor bo\'g\'ozi' },
+      { id: 'eu', name: 'Yevropa Ittifoqi', flag: '🇪🇺', labelCoords: [90, 190], path: 'M 40 160 L 80 140 L 140 150 L 150 210 L 130 250 L 70 260 L 45 220 Z', color: 'rgba(16, 185, 129, 0.15)', stroke: 'rgba(16, 185, 129, 0.50)', info: 'GSP+ 0% bojsiz bozor: Frankfurt, Duisburg, Gamburg' },
+      { id: 'irn', name: 'Eron', flag: '🇮🇷', labelCoords: [290, 440], path: 'M 240 380 L 300 375 L 360 395 L 370 450 L 320 485 L 260 460 L 235 410 Z', color: 'rgba(168, 85, 247, 0.12)', stroke: 'rgba(168, 85, 247, 0.40)', info: 'Janubiy dengiz yo\'lagi: Tehron, Bandar-Abbos (Fors ko\'rfazi)' },
+      { id: 'aze', name: 'Ozarbayjon', flag: '🇦🇿', labelCoords: [235, 335], path: 'M 220 325 L 250 320 L 255 345 L 230 350 Z', color: 'rgba(56, 189, 248, 0.15)', stroke: 'rgba(56, 189, 248, 0.50)', info: 'Kavkaz transport darvozasi: Boku, Alat porti (BTQ temiryo\'li)' },
+      { id: 'kgz', name: 'Qirg\'iziston', flag: '🇰🇬', labelCoords: [545, 345], path: 'M 500 335 L 575 330 L 600 355 L 530 365 Z', color: 'rgba(251, 146, 60, 0.12)', stroke: 'rgba(251, 146, 60, 0.40)', info: 'Xitoy-Qirg\'iziston-O\'zbekiston temiryo\'li' },
+      { id: 'tjk', name: 'Tojikiston', flag: '🇹🇯', labelCoords: [495, 395], path: 'M 485 375 L 525 375 L 535 410 L 480 405 Z', color: 'rgba(234, 179, 8, 0.12)', stroke: 'rgba(234, 179, 8, 0.40)', info: 'Qo\'shni transport va energetika xabi: Dushanbe, Sug\'d' },
+      { id: 'tkm', name: 'Turkmaniston', flag: '🇹🇲', labelCoords: [335, 375], path: 'M 290 350 L 360 340 L 390 375 L 360 410 L 305 400 Z', color: 'rgba(45, 212, 191, 0.12)', stroke: 'rgba(45, 212, 191, 0.40)', info: 'Kaspiy porti: Turkmanboshi, Eron va Fors ko\'rfazi yo\'li' }
+    ];
+
+    const WATER_BODIES_DATA = [
+      { id: 'caspian', name: 'Kaspiy Dengizi', labelCoords: [265, 335], path: 'M 255 280 Q 280 300 270 345 Q 260 380 280 395 L 290 395 Q 295 350 280 300 L 260 275 Z', color: 'rgba(14, 116, 144, 0.35)', stroke: 'rgba(34, 211, 238, 0.5)' },
+      { id: 'blacksea', name: 'Qora Dengiz', labelCoords: [180, 310], path: 'M 140 290 Q 180 280 215 305 Q 210 325 180 330 Q 150 320 140 290 Z', color: 'rgba(14, 116, 144, 0.32)', stroke: 'rgba(34, 211, 238, 0.45)' },
+      { id: 'persian', name: 'Fors Ko\'rfazi', labelCoords: [305, 505], path: 'M 270 480 Q 320 495 350 515 L 340 525 Q 300 510 260 490 Z', color: 'rgba(14, 116, 144, 0.30)', stroke: 'rgba(34, 211, 238, 0.4)' }
+    ];
+
+    const REGIONAL_HUBS_DATA = [
+      { name: 'Almati', coords: [580, 315] },
+      { name: 'Ostona', coords: [460, 185] },
+      { name: 'Pekin', coords: [850, 235] },
+      { name: 'Shanxay', coords: [885, 335] },
+      { name: 'Boku', coords: [248, 338] },
+      { name: 'Tehron', coords: [295, 415] },
+      { name: 'Bandar-Abbos', coords: [325, 490] },
+      { name: 'Ashxobod', coords: [340, 385] },
+      { name: 'Bishkek', coords: [525, 330] },
+      { name: 'Dushanbe', coords: [490, 390] },
+      { name: 'Berlin', coords: [115, 175] },
+      { name: 'Oqtov Porti', coords: [265, 290] }
+    ];
+
+    // Inspector References
+    const inspIconEl = document.getElementById('inspIcon');
+    const inspNameEl = document.getElementById('inspName');
+    const inspTimeEl = document.getElementById('inspTime');
+    const inspDescEl = document.getElementById('inspDesc');
+    const inspTagsEl = document.getElementById('inspTags');
+
+    const ROUTE_COUNTRY_MAP = {
+      china: ['uzb', 'kaz', 'chn'],
+      russia: ['uzb', 'kaz', 'rus'],
+      eu: ['uzb', 'kaz', 'aze', 'eu'],
+      turkey: ['uzb', 'tkm', 'aze', 'tur']
+    };
+
+    /**
+     * INITIALIZATION
+     */
+    function init() {
+      renderEurasianGeopolitics(currentDestinationId);
+      renderDestinationButtons();
+      loadRoute(currentDestinationId);
+    }
+
+    /**
+     * RENDER EURASIAN COUNTRIES, SEAS AND HUBS
+     */
+    function renderEurasianGeopolitics(destId = 'china') {
+      const markedCountryIds = ROUTE_COUNTRY_MAP[destId] || ['uzb', 'kaz', 'chn'];
+
+      // 1. Water bodies
+      waterBodiesGroup.innerHTML = '';
+      WATER_BODIES_DATA.forEach(water => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', water.path);
+        p.setAttribute('fill', '#061c33');
+        p.setAttribute('stroke', '#0ea5e9');
+        p.setAttribute('stroke-width', '1.6');
+        p.setAttribute('opacity', '0.8');
+        g.appendChild(p);
+
+        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t.setAttribute('x', water.labelCoords[0]);
+        t.setAttribute('y', water.labelCoords[1]);
+        t.setAttribute('fill', '#38bdf8');
+        t.setAttribute('font-size', '9');
+        t.setAttribute('font-style', 'italic');
+        t.setAttribute('font-weight', '700');
+        t.setAttribute('text-anchor', 'middle');
+        t.textContent = water.name;
+        g.appendChild(t);
+
+        waterBodiesGroup.appendChild(g);
+      });
+
+      // 2. Countries (BELGILANGAN DAVLATLAR QIZIL CHIZIQ BILAN)
+      countriesGroup.innerHTML = '';
+      COUNTRIES_DATA.forEach(country => {
+        const isMarked = markedCountryIds.includes(country.id);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.style.cursor = 'pointer';
+
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', country.path);
+        p.setAttribute('fill', isMarked ? (country.id === 'uzb' ? 'rgba(239, 68, 68, 0.28)' : 'rgba(239, 68, 68, 0.18)') : 'rgba(17, 36, 59, 0.65)');
+        p.setAttribute('stroke', isMarked ? '#EF4444' : 'rgba(70, 115, 170, 0.45)');
+        p.setAttribute('stroke-width', isMarked ? (country.id === 'uzb' ? '3.8' : '3.0') : '1.2');
+        if (isMarked) {
+          p.setAttribute('filter', 'url(#redBorderGlow)');
+        }
+        g.appendChild(p);
+
+        if (isMarked) {
+          const pulseBorder = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          pulseBorder.setAttribute('d', country.path);
+          pulseBorder.setAttribute('fill', 'none');
+          pulseBorder.setAttribute('stroke', '#DC2626');
+          pulseBorder.setAttribute('stroke-width', '1.8');
+          pulseBorder.setAttribute('stroke-dasharray', '6 4');
+          pulseBorder.setAttribute('opacity', '0.85');
+          g.appendChild(pulseBorder);
+        }
+
+        // Country label badge
+        const bgBadge = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        bgBadge.setAttribute('x', country.labelCoords[0] - (isMarked ? 46 : 38));
+        bgBadge.setAttribute('y', country.labelCoords[1] - 11);
+        bgBadge.setAttribute('width', isMarked ? 92 : 76);
+        bgBadge.setAttribute('height', 18);
+        bgBadge.setAttribute('rx', 6);
+        bgBadge.setAttribute('fill', isMarked ? '#991B1B' : '#07172B');
+        bgBadge.setAttribute('stroke', isMarked ? '#EF4444' : '#334D6E');
+        bgBadge.setAttribute('stroke-width', isMarked ? '1.8' : '1');
+        g.appendChild(bgBadge);
+
+        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t.setAttribute('x', country.labelCoords[0]);
+        t.setAttribute('y', country.labelCoords[1] + 2);
+        t.setAttribute('fill', '#ffffff');
+        t.setAttribute('font-size', isMarked ? '10.5' : '9.5');
+        t.setAttribute('font-weight', isMarked ? '900' : '700');
+        t.setAttribute('text-anchor', 'middle');
+        t.style.pointerEvents = 'none';
+        t.textContent = `${country.flag} ${country.name}`;
+        g.appendChild(t);
+
+        // Hover event for countries
+        g.onmouseenter = (e) => {
+          showCountryTooltip(country, isMarked, e);
+        };
+        g.onmouseleave = () => {
+          hideTooltip();
+        };
+
+        countriesGroup.appendChild(g);
+      });
+
+      // 3. Regional Hubs
+      regionalHubsGroup.innerHTML = '';
+      REGIONAL_HUBS_DATA.forEach(hub => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('opacity', '0.75');
+
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', hub.coords[0]);
+        c.setAttribute('cy', hub.coords[1]);
+        c.setAttribute('r', '3');
+        c.setAttribute('fill', 'rgba(148, 169, 201, 0.5)');
+        c.setAttribute('stroke', 'rgba(255, 255, 255, 0.6)');
+        c.setAttribute('stroke-width', '1');
+        g.appendChild(c);
+
+        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t.setAttribute('x', hub.coords[0]);
+        t.setAttribute('y', hub.coords[1] + 10);
+        t.setAttribute('fill', 'rgba(148, 169, 201, 0.75)');
+        t.setAttribute('font-size', '8');
+        t.setAttribute('font-weight', '600');
+        t.setAttribute('text-anchor', 'middle');
+        t.textContent = hub.name;
+        g.appendChild(t);
+
+        regionalHubsGroup.appendChild(g);
+      });
+    }
+
+    function showCountryTooltip(country, event) {
+      mapTooltipEl.style.display = 'block';
+      mapTooltipEl.innerHTML = `<strong>${country.flag} ${country.name}</strong><br><span style="color:#94a9c9;font-size:0.68rem">${country.info}</span>`;
+
+      const rect = mapContainerEl.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      mapTooltipEl.style.left = `${x}px`;
+      mapTooltipEl.style.top = `${y}px`;
+    }
+
+    /**
+     * RENDER DESTINATION SELECTOR BUTTONS
+     */
+    function renderDestinationButtons() {
+      destSwitcherEl.innerHTML = '';
+      LOGISTICS_DATA.destinations.forEach(dest => {
+        const btn = document.createElement('button');
+        btn.className = `dest-pill ${dest.id === currentDestinationId ? 'active' : ''}`;
+        btn.innerHTML = `<span>${dest.flag}</span> <span>${dest.name}</span>`;
+        btn.onclick = () => {
+          if (currentDestinationId !== dest.id) {
+            currentDestinationId = dest.id;
+            renderDestinationButtons();
+            loadRoute(dest.id);
+          }
+        };
+        destSwitcherEl.appendChild(btn);
+      });
+    }
+
+    /**
+     * LOAD & RENDER ROUTE
+     */
+    function loadRoute(destId) {
+      const route = LOGISTICS_DATA.destinations.find(d => d.id === destId);
+      if (!route) return;
+
+      // Update total badge
+      routeTotalBadgeEl.textContent = `${route.totalDistance} | ${route.totalTime}`;
+
+      // Set default selected stage to first or stay if present
+      if (!route.stages.some(s => s.id === currentSelectedStageId)) {
+        currentSelectedStageId = route.stages[0].id;
+      }
+
+      // Draw SVG Elements
+      renderSvgRoutes(route);
+
+      // Render Stage Timeline List
+      renderTimelineList(route);
+
+      // Update Detail Inspector Card
+      const currentStage = route.stages.find(s => s.id === currentSelectedStageId) || route.stages[0];
+      updateInspector(currentStage);
+    }
+
+    /**
+     * GENERATE SMOOTH BEZIER SVG PATH BETWEEN POINTS
+     */
+    function generatePathString(stages) {
+      if (stages.length < 2) return '';
+      let d = `M ${stages[0].coords[0]} ${stages[0].coords[1]}`;
+
+      for (let i = 0; i < stages.length - 1; i++) {
+        const p1 = stages[i].coords;
+        const p2 = stages[i + 1].coords;
+
+        // Calculate smooth curve control point
+        const midX = (p1[0] + p2[0]) / 2;
+        const midY = (p1[1] + p2[1]) / 2;
+        const curveOffset = (p2[0] - p1[0]) * 0.15; // gentle curve arc
+
+        d += ` Q ${midX} ${midY - curveOffset}, ${p2[0]} ${p2[1]}`;
+      }
+      return d;
+    }
+
+    /**
+     * RENDER SVG ROUTE PATHS AND NODES
+     */
+    function renderSvgRoutes(route) {
+      routeLinesGroup.innerHTML = '';
+      pulseParticleGroup.innerHTML = '';
+      routeNodesGroup.innerHTML = '';
+
+      const pathString = generatePathString(route.stages);
+
+      // 1. Static corridor backdrop line
+      const trackPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      trackPath.setAttribute('d', pathString);
+      trackPath.setAttribute('class', 'svg-corridor-track');
+      routeLinesGroup.appendChild(trackPath);
+
+      // 2. Active animated dashed line
+      const activePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      activePath.setAttribute('d', pathString);
+      activePath.setAttribute('class', 'svg-corridor-active');
+      activePath.setAttribute('id', 'activeSvgPath');
+      routeLinesGroup.appendChild(activePath);
+
+      // 3. Moving Photon Particle (along path via requestAnimationFrame)
+      startPhotonAnimation(activePath);
+
+      // 4. Render Stage Marker Nodes
+      route.stages.forEach((stage, idx) => {
+        const [x, y] = stage.coords;
+        const isSelected = stage.id === currentSelectedStageId;
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', `map-node ${isSelected ? 'selected' : ''}`);
+        g.setAttribute('id', `node-${stage.id}`);
+
+        // Outer pulsing halo
+        const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        halo.setAttribute('cx', x);
+        halo.setAttribute('cy', y);
+        halo.setAttribute('r', isSelected ? '32' : '22');
+        halo.setAttribute('class', 'node-halo');
+        halo.setAttribute('fill', stage.color || '#D4AF37');
+        halo.setAttribute('stroke', stage.color || '#D4AF37');
+        halo.setAttribute('opacity', isSelected ? '0.5' : '0.2');
+        g.appendChild(halo);
+
+        // Core interactive circle
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '14');
+        circle.setAttribute('class', 'node-circle');
+        circle.setAttribute('fill', '#07111e');
+        circle.setAttribute('stroke', stage.color || '#D4AF37');
+        circle.setAttribute('stroke-width', '2.5');
+        g.appendChild(circle);
+
+        // Center emoji or step number
+        const textIcon = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textIcon.setAttribute('x', x);
+        textIcon.setAttribute('y', y + 4);
+        textIcon.setAttribute('text-anchor', 'middle');
+        textIcon.setAttribute('font-size', '10px');
+        textIcon.setAttribute('fill', '#ffffff');
+        textIcon.textContent = stage.icon;
+        g.appendChild(textIcon);
+
+        // Node Title label above or below
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', x);
+        label.setAttribute('y', y - 22);
+        label.setAttribute('class', 'node-label');
+        label.textContent = stage.name.split(',')[0];
+        g.appendChild(label);
+
+        // Node sublabel
+        const sublabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        sublabel.setAttribute('x', x);
+        sublabel.setAttribute('y', y + 26);
+        sublabel.setAttribute('class', 'node-sublabel');
+        sublabel.textContent = stage.time.split('(')[0].trim();
+        g.appendChild(sublabel);
+
+        // Click Event -> Select Stage
+        g.onclick = () => {
+          selectStage(stage.id, route);
+        };
+
+        // Hover Event -> Show Tooltip
+        g.onmouseenter = (e) => {
+          showTooltip(stage, e);
+        };
+        g.onmouseleave = () => {
+          hideTooltip();
+        };
+
+        routeNodesGroup.appendChild(g);
+      });
+    }
+
+    /**
+     * SMOOTH 60FPS PULSE/PHOTON ANIMATION ALONG SVG PATH
+     */
+    function startPhotonAnimation(pathElement) {
+      if (pulseAnimationFrameId) {
+        cancelAnimationFrame(pulseAnimationFrameId);
+      }
+
+      pulseParticleGroup.innerHTML = '';
+
+      // Create glowing photon circle
+      const photon = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      photon.setAttribute('r', '6');
+      photon.setAttribute('class', 'photon-dot');
+      pulseParticleGroup.appendChild(photon);
+
+      // Trailing secondary particle
+      const trailer = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      trailer.setAttribute('r', '3.5');
+      trailer.setAttribute('fill', '#D4AF37');
+      trailer.setAttribute('opacity', '0.6');
+      pulseParticleGroup.appendChild(trailer);
+
+      const pathLength = pathElement.getTotalLength();
+      let progress = 0;
+      const speed = 0.0018; // Speed of travel along path
+
+      function step() {
+        progress = (progress + speed) % 1;
+        const distance = progress * pathLength;
+        const point = pathElement.getPointAtLength(distance);
+
+        photon.setAttribute('cx', point.x);
+        photon.setAttribute('cy', point.y);
+
+        // Trailer lagging slightly behind
+        const trailDist = Math.max(0, distance - 18);
+        const trailPoint = pathElement.getPointAtLength(trailDist);
+        trailer.setAttribute('cx', trailPoint.x);
+        trailer.setAttribute('cy', trailPoint.y);
+
+        pulseAnimationFrameId = requestAnimationFrame(step);
+      }
+
+      pulseAnimationFrameId = requestAnimationFrame(step);
+    }
+
+    /**
+     * RENDER SIDEBAR TIMELINE LIST
+     */
+    function renderTimelineList(route) {
+      stagesTimelineEl.innerHTML = '';
+
+      route.stages.forEach((stage, idx) => {
+        const isSelected = stage.id === currentSelectedStageId;
+        const card = document.createElement('div');
+        card.className = `stage-card ${isSelected ? 'active' : ''}`;
+        card.id = `timeline-card-${stage.id}`;
+
+        card.innerHTML = `
+          <div class="stage-card-icon">${stage.icon}</div>
+          <div class="stage-title">
+            <span>${stage.name}</span>
+            <span class="stage-time">${stage.time.split('(')[0]}</span>
+          </div>
+          <div class="stage-role">${stage.role}</div>
+          <div class="stage-desc">${stage.desc}</div>
+        `;
+
+        card.onclick = () => {
+          selectStage(stage.id, route);
+        };
+
+        stagesTimelineEl.appendChild(card);
+      });
+    }
+
+    /**
+     * SELECT STAGE AND UPDATE UI
+     */
+    function selectStage(stageId, route) {
+      currentSelectedStageId = stageId;
+
+      // Update node styles
+      document.querySelectorAll('.map-node').forEach(node => {
+        node.classList.remove('selected');
+      });
+      const selectedNode = document.getElementById(`node-${stageId}`);
+      if (selectedNode) selectedNode.classList.add('selected');
+
+      // Update timeline card styles
+      document.querySelectorAll('.stage-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      const selectedCard = document.getElementById(`timeline-card-${stageId}`);
+      if (selectedCard) {
+        selectedCard.classList.add('active');
+        selectedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // Update Inspector Panel
+      const stage = route.stages.find(s => s.id === stageId);
+      if (stage) {
+        updateInspector(stage);
+      }
+    }
+
+    /**
+     * UPDATE BOTTOM INSPECTOR PANEL
+     */
+    function updateInspector(stage) {
+      inspIconEl.textContent = stage.icon;
+      inspNameEl.textContent = stage.name;
+      inspTimeEl.textContent = `${stage.role} • ${stage.time}`;
+      inspDescEl.textContent = stage.desc;
+
+      inspTagsEl.innerHTML = '';
+      if (stage.tags && Array.isArray(stage.tags)) {
+        stage.tags.forEach(tag => {
+          const span = document.createElement('span');
+          span.className = 'inspector-tag';
+          span.textContent = tag;
+          inspTagsEl.appendChild(span);
+        });
+      }
+    }
+
+    /**
+     * TOOLTIP LOGIC
+     */
+    function showTooltip(stage, event) {
+      mapTooltipEl.style.display = 'block';
+      mapTooltipEl.innerHTML = `<strong>${stage.name}</strong><br><span style="color:var(--accent-gold-light)">${stage.time}</span>`;
+
+      const rect = mapContainerEl.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      mapTooltipEl.style.left = `${x}px`;
+      mapTooltipEl.style.top = `${y}px`;
+    }
+
+    function hideTooltip() {
+      mapTooltipEl.style.display = 'none';
+    }
+
+    // Start on DOM ready
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+
+</body>
+</html>
